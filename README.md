@@ -29,6 +29,8 @@
 [fs.createReadStream] ──► [stream.pipe(res)] ──► [Ответ клиенту]
 ```
 
+---
+
 ### 🗂️ Структура папок:
 
 ```text
