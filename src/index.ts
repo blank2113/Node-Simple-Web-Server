@@ -22,8 +22,6 @@ server.on("error", (error: NodeJS.ErrnoException) => {
     console.error("❌ Ошибка при запуске сервера:", error.message)
   }
   process.exit(1)
-
-
 })
 
 server.listen(PORT, () => {
