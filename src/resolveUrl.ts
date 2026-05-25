@@ -1,12 +1,11 @@
 import path from "node:path";
 import fs from 'node:fs'
-import { MIME_TYPES } from "./type.js";
+import { MIME_TYPES } from "./mineType.js";
 import http from 'node:http'
+import { HTTP_ERRORS } from "./errors/errors.js";
 
 
 const PUBLIC_DIR = path.join(process.cwd(), "./src/static");
-
-
 
 const resolveStaticFile = async (basePath: string): Promise<string | null> => {
   const candidates = [
@@ -41,7 +40,7 @@ export const resolveUrl = async (
   const safePathname = parseSafePath(req.url || '', req.headers.host || 'localhost')
   if (!safePathname) {
     res.writeHead(400, { 'Content-Type': 'text/plain; charset=utf-8' })
-    res.end('400: Bad Request')
+    res.end(HTTP_ERRORS[400])
     return
   }
 
@@ -52,7 +51,7 @@ export const resolveUrl = async (
   // 3. Защита от Directory Traversal
   if (!requestedPath.startsWith(PUBLIC_DIR)) {
     res.writeHead(403, { 'Content-Type': 'text/plain; charset=utf-8' })
-    res.end('403: Доступ запрещен')
+    res.end(HTTP_ERRORS[403])
     return
   }
 
@@ -60,7 +59,7 @@ export const resolveUrl = async (
   const finalFilePath = await resolveStaticFile(requestedPath)
   if (!finalFilePath) {
     res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' })
-    res.end('404: Файл не найден')
+    res.end(HTTP_ERRORS[404])
     return
   }
 
@@ -77,7 +76,7 @@ export const resolveUrl = async (
   stream.on('error', () => {
     if (!res.headersSent) {
       res.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8' })
-      res.end('500: Внутренняя ошибка сервера')
+      res.end(HTTP_ERRORS[500])
     }
   })
 }
